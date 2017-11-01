@@ -10,7 +10,7 @@ module XmlPatch
       @diff_document = XmlPatch::DiffDocument.new
     end
 
-    def add(op_name, xpath)
+    def register(op_name, xpath)
       op = XmlPatch::Operations.instance(op_name, sel: xpath)
       diff_document << op if op
       diff_document
@@ -30,7 +30,7 @@ module XmlPatch
       end
 
       def on_element(_namespace, name, attrs = {})
-        builder.add name, attrs['sel']
+        builder.register name, attrs['sel']
       end
     end
 

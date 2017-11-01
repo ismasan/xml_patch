@@ -3,11 +3,11 @@ require 'xml_patch/diff_builder'
 require 'xml_patch/diff_document'
 
 RSpec.describe XmlPatch::DiffBuilder do
-  describe 'add' do
+  describe 'register' do
     it 'appends a remove operation to the diff document' do
       builder = described_class.new
-      builder.add('remove', '/foo/bar')
-      builder.add('remove', '/baz/qux')
+      builder.register('remove', '/foo/bar')
+      builder.register('remove', '/baz/qux')
 
       doc = XmlPatch::DiffDocument.new \
             << XmlPatch::Operations::Remove.new(sel: '/foo/bar') \
@@ -35,19 +35,19 @@ RSpec.describe XmlPatch::DiffBuilder do
       expect(builder.diff_document).to eq(diff)
     end
 
-    it 'adds remove operations for each <remove> in the input' do
+    it 'registers remove operations for each <remove> in the input' do
       xml = <<-XML
         <remove sel="/foo/bar" />
         <remove sel="/baz/qux" />
       XML
 
       builder = described_class.new
-      allow(builder).to receive(:add)
+      allow(builder).to receive(:register)
 
       builder.parse(xml)
 
-      expect(builder).to have_received(:add).with('remove', '/foo/bar').ordered
-      expect(builder).to have_received(:add).with('remove', '/baz/qux').ordered
+      expect(builder).to have_received(:register).with('remove', '/foo/bar').ordered
+      expect(builder).to have_received(:register).with('remove', '/baz/qux').ordered
     end
   end
 end
