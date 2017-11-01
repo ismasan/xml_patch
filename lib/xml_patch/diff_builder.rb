@@ -1,6 +1,6 @@
 require 'oga'
 require 'xml_patch/diff_document'
-require 'xml_patch/operations/remove'
+require 'xml_patch/operations'
 
 module XmlPatch
   class DiffBuilder
@@ -10,8 +10,10 @@ module XmlPatch
       @diff_document = XmlPatch::DiffDocument.new
     end
 
-    def remove(xpath)
-      diff_document << XmlPatch::Operations::Remove.new(sel: xpath)
+    def add(op_name, xpath)
+      op = XmlPatch::Operations.instance(op_name, sel: xpath)
+      diff_document << op if op
+      diff_document
     end
 
     def parse(xml)
@@ -28,9 +30,7 @@ module XmlPatch
       end
 
       def on_element(_namespace, name, attrs = {})
-        case name
-        when 'remove' then builder.remove(attrs['sel'])
-        end
+        builder.add name, attrs['sel']
       end
     end
 

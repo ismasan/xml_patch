@@ -26,5 +26,7 @@ module XmlPatch
         %(<remove sel="#{sel}" />)
       end
     end
+
+    registry[:remove] = Remove
   end
 end
